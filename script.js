@@ -18,11 +18,11 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.03;
 
 // create a line from spline
-const points = spline.getPoints(100);
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
-const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-const line = new THREE.Line(geometry, material);
-scene.add(line);
+// const points = spline.getPoints(100);
+// const geometry = new THREE.BufferGeometry().setFromPoints(points);
+// const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+// const line = new THREE.Line(geometry, material);
+// scene.add(line);
 
 // create tube from spline
 const tubeGeo = new THREE.TubeGeometry(spline, 222, 0.65, 16, true);
@@ -35,7 +35,7 @@ scene.add(tubeMesh);
 
 // create box geometry and add it to the scene inside the tube geometry
 const boxNumber = 55;
-const size = 0.2;
+const size = 0.15;
 const boxGeometry = new THREE.BoxGeometry(size, size, size);
 const boxMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
@@ -44,19 +44,30 @@ const boxMaterial = new THREE.MeshBasicMaterial({
 let box;
 for (let i = 0; i <boxNumber; i++) {
   box = new THREE.Mesh(boxGeometry, boxMaterial);
+  // randomize box position
   const p = (i / boxNumber + Math.random() * 0.1) % 1;
+  // position p point on the path
   const pos = tubeGeo.parameters.path.getPointAt(p);
-  pos.x += Math.random() - 0.4;
-  pos.z += Math.random() - 0.4;
+  pos.x += Math.random() - 0.5;
+  pos.z += Math.random() - 0.5;
   box.position.copy(pos);
+  
+  // randomize box rotation
   const rote = new THREE.Vector3(
-    Math.random() - 0.4,
-    Math.random() - 0.4,
-    Math.random() - 0.4
+    Math.random() - Math.PI,
+    Math.random() - Math.PI,
+    Math.random() - Math.PI
   );
   box.rotation.set(rote.x, rote.y, rote.z);
   
-  scene.add(box);
+  const edges = new THREE.EdgesGeometry(boxGeometry, 0.2);
+  const lineMat = new THREE.LineBasicMaterial({color: 0xffff00});
+  const boxLines = new THREE.LineSegments(edges, lineMat);
+  boxLines.position.copy(pos);
+  boxLines.rotation.copy(rote);
+  
+  // scene.add(box);
+  scene.add(boxLines);
 }
 
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
@@ -74,7 +85,6 @@ function updateCamera(t) {
 
 function animate(t = 0) {
   updateCamera(t);
-  box.rotation.y += 0.01;
   // mesh1.rotation.y += 0.01;
   renderer.render(scene, camera);
 }
