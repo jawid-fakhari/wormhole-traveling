@@ -29,8 +29,7 @@ composer.addPass(renderScene);
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 5, 1, 0);
 composer.addPass(bloomPass);
 
-// tone mapping 
-
+// tone mapping
 
 // create a line from spline
 // const points = spline.getPoints(100);
@@ -52,13 +51,11 @@ scene.add(tubeMesh);
 const boxNumber = 55;
 const size = 0.15;
 const boxGeometry = new THREE.BoxGeometry(size, size, size);
-const boxMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  wireframe: true,
-});
-let box;
+const boxMaterial = new THREE.MeshBasicMaterial({});
+
 for (let i = 0; i < boxNumber; i++) {
-  box = new THREE.Mesh(boxGeometry, boxMaterial);
+  // randomize color values
+  const box = new THREE.Mesh(boxGeometry, boxMaterial);
   // randomize box position
   const p = (i / boxNumber + Math.random() * 0.1) % 1;
   // position p point on the path
@@ -66,7 +63,7 @@ for (let i = 0; i < boxNumber; i++) {
   pos.x += Math.random() - 0.5;
   pos.z += Math.random() - 0.5;
   box.position.copy(pos);
-
+  
   // randomize box rotation
   const rote = new THREE.Vector3(
     Math.random() - Math.PI,
@@ -74,9 +71,13 @@ for (let i = 0; i < boxNumber; i++) {
     Math.random() - Math.PI
   );
   box.rotation.set(rote.x, rote.y, rote.z);
-
+  
   const edges = new THREE.EdgesGeometry(boxGeometry, 0.2);
-  const lineMat = new THREE.LineBasicMaterial({ color: 0xffff00 });
+  
+  const lineMat = new THREE.LineBasicMaterial({});
+  const color = new THREE.Color(Math.random(), Math.random(), Math.random());
+  lineMat.color.copy(color);
+
   const boxLines = new THREE.LineSegments(edges, lineMat);
   boxLines.position.copy(pos);
   boxLines.rotation.copy(rote);
